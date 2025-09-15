@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Jubilació - Bombers Catalunya</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #ff4444 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '🔥';
+            font-size: 100px;
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            opacity: 0.1;
+            transform: rotate(-15deg);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            border-left: 5px solid #ff4444;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-box h3 {
+            color: #d63031;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .info-box a {
+            color: #0984e3;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .info-box a:hover {
+            color: #74b9ff;
+            text-decoration: underline;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2d3436;
+            font-size: 1.1em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ff4444;
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(255, 68, 68, 0.3);
+            margin-top: 20px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 68, 68, 0.4);
+            background: linear-gradient(135deg, #ff5555 0%, #dd1111 100%);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+            background: linear-gradient(135deg, #ee3333 0%, #bb0000 100%);
+        }
+
+        .result-container {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0, 184, 148, 0.3);
+        }
+
+        .result-container.show {
+            display: block;
+        }
+
+        .result-container h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .result-date {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .requirements-check {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+
+        .requirement .check {
+            margin-right: 10px;
+            font-size: 1.5em;
+        }
+
+        .error-container {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #e17055 0%, #d63031 100%);
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            display: none;
+        }
+
+        .error-container.show {
+            display: block;
+        }
+
+        .footer {
+            background: #2d3436;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .result-date {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚒 Calculadora de Jubilació</h1>
+            <p>Bombers de la Generalitat de Catalunya</p>
+        </div>
+
+        <div class="form-container">
+            <div class="info-box">
+                <h3>📋 Informació Necessària</h3>
+                <p><strong>Per obtenir les dades necessàries, consulta:</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>📊 <strong>Vida Laboral:</strong> <a href="https://portal.seg-social.gob.es/" target="_blank">Portal Seguretat Social</a></li>
+                    <li>📅 <strong>Data d'inici bomber:</strong> Consulta el teu historial laboral o expedient personal</li>
+                    <li>⚠️ <strong>Important:</strong> Els dies cotitzats han de ser el total de tota la teva carrera laboral</li>
+                </ul>
+            </div>
+
+            <div class="form-group">
+                <label for="birthDate">📅 Data de Naixement:</label>
+                <input type="date" id="birthDate" autocomplete="off" placeholder="">
+            </div>
+
+            <div class="form-group">
+                <label for="firemanStartDate">🚒 Data d'Inici com a Bomber:</label>
+                <input type="date" id="firemanStartDate" autocomplete="off" placeholder="">
+            </div>
+
+            <div class="form-group">
+                <label for="contributedDays">📊 Dies Cotitzats Total (Seguretat Social):</label>
+                <input type="number" id="contributedDays" min="1" placeholder="Ex: 13320" autocomplete="off">
+            </div>
+
+            <button class="calculate-btn" onclick="window.doCalculation = true; setTimeout(calculateRetirement, 50);">
+                🔥 Calcular Data de Jubilació
+            </button>
+
+            <div id="resultContainer" class="result-container">
+                <h3>🎉 Resultats del Càlcul</h3>
+                <div class="result-date" id="retirementDate">Data de jubilació</div>
+                <div class="requirements-check">
+                    <div class="requirement">
+                        <span class="check" id="ageCheck">⏳</span>
+                        <span id="ageText">Requisit d'edat (59 anys)</span>
+                    </div>
+                    <div class="requirement">
+                        <span class="check" id="firemanCheck">⏳</span>
+                        <span id="firemanText">Requisit bomber (35 anys complets)</span>
+                    </div>
+                    <div class="requirement">
+                        <span class="check" id="contributionCheck">⏳</span>
+                        <span id="contributionText">Requisit cotització (38 anys i 6 mesos)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="errorContainer" class="error-container">
+                <h3>⚠️ Error en el Càlcul</h3>
+                <p id="errorMessage">Error desconegut</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>💡 Aquesta calculadora és orientativa. Per a informació oficial, consulta sempre amb la Seguretat Social i els teus representants sindicals.</p>
+        </div>
+    </div>
+
+    <script>
+        function calculateRetirement() {
+            try {
+                // Obtenir dades del formulari
+                const birthDateValue = document.getElementById('birthDate').value;
+                const firemanStartDateValue = document.getElementById('firemanStartDate').value;
+                const contributedDaysValue = document.getElementById('contributedDays').value;
+
+                // Validacions bàsiques
+                if (!birthDateValue || !firemanStartDateValue || !contributedDaysValue) {
+                    showError('Si us plau, completa tots els camps correctament.');
+                    return;
+                }
+
+                const birthDate = new Date(birthDateValue);
+                const firemanStartDate = new Date(firemanStartDateValue);
+                const contributedDays = parseInt(contributedDaysValue);
+
+                if (isNaN(contributedDays) || contributedDays <= 0) {
+                    showError('Els dies cotitzats han de ser un número positiu.');
+                    return;
+                }
+
+                if (firemanStartDate <= birthDate) {
+                    showError('La data d\'inici com a bomber ha de ser posterior a la data de naixement.');
+                    return;
+                }
+
+                // Calcular dates clau
+                const age59Date = new Date(birthDate);
+                age59Date.setFullYear(age59Date.getFullYear() + 59);
+
+                const fireman35Date = new Date(firemanStartDate);
+                fireman35Date.setFullYear(fireman35Date.getFullYear() + 35);
+
+                // Calcular quan tindrà els anys de cotització necessaris
+                const today = new Date();
+                const contributedYears = contributedDays / 365;
+                const requiredContributionYears = 38.5; // 38 anys i 6 mesos
+                
+                let contributionDate;
+                if (contributedYears >= requiredContributionYears) {
+                    contributionDate = today;
+                } else {
+                    const daysNeeded = Math.ceil((requiredContributionYears - contributedYears) * 365);
+                    contributionDate = new Date(today);
+                    contributionDate.setDate(contributionDate.getDate() + daysNeeded);
+                }
+
+                // La data de jubilació és la més tardana de les tres
+                const retirementDate = new Date(Math.max(age59Date, fireman35Date, contributionDate));
+
+                // Mostrar resultats
+                showResults(retirementDate, age59Date, fireman35Date, contributionDate, contributedYears);
+
+            } catch (error) {
+                showError('Error en el càlcul: ' + error.message);
+            }
+        }
+
+        function showResults(retirementDate, age59Date, fireman35Date, contributionDate, contributedYears) {
+            const resultContainer = document.getElementById('resultContainer');
+            const errorContainer = document.getElementById('errorContainer');
+            
+            errorContainer.classList.remove('show');
+            resultContainer.classList.add('show');
+
+            // Formatear la data de jubilació
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                weekday: 'long'
+            };
+            
+            document.getElementById('retirementDate').textContent = retirementDate.toLocaleDateString('ca-ES', options);
+
+            // Actualizar checks
+            const today = new Date();
+            updateCheck('ageCheck', 'ageText', today >= age59Date, `Edat 59 anys (${age59Date.toLocaleDateString('ca-ES')})`);
+            updateCheck('firemanCheck', 'firemanText', today >= fireman35Date, `35 anys bomber (${fireman35Date.toLocaleDateString('ca-ES')})`);
+            updateCheck('contributionCheck', 'contributionText', contributedYears >= 38.5, `38 anys i 6 mesos cotitzats (tens ${contributedYears.toFixed(1)} anys)`);
+        }
+
+        function updateCheck(checkId, textId, condition, text) {
+            const checkElement = document.getElementById(checkId);
+            const textElement = document.getElementById(textId);
+            
+            if (condition) {
+                checkElement.textContent = '✅';
+                checkElement.style.color = '#00b894';
+            } else {
+                checkElement.textContent = '⏳';
+                checkElement.style.color = '#fdcb6e';
+            }
+            
+            textElement.textContent = text;
+        }
+
+        function showError(message) {
+            const resultContainer = document.getElementById('resultContainer');
+            const errorContainer = document.getElementById('errorContainer');
+            
+            resultContainer.classList.remove('show');
+            errorContainer.classList.add('show');
+            document.getElementById('errorMessage').textContent = message;
+        }
+    </script>
+</body>
+</html>
